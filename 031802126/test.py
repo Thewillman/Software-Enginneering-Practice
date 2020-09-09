@@ -13,55 +13,20 @@ if __name__ == '__main__':
     cnt = 0
     sum = 0
     array = []
-    cntl = 0
     for i in range(0,len(base_data)):
-        if base_data[i] == ' ':
-            continue
-        elif base_data[i] == '”':
-            cntl += 1
-        elif base_data[i] == '\n':
-            if i == 0 or base_data[i-1] == '\n' or base_data[i-1] == '“' or base_data[i-1] == "：" or base_data[i-1] == ' ' or base_data[i-1] == '。' or base_data[i-1] == '——':
-                continue
-            else:
-                base_sentence.append(s)
-                print(s)
-                array.append(cnt)
-                sum += cnt
-                s = ""
-                cnt = 0
-                continue
-        elif base_data[i] == '。' or base_data[i] == '？' or base_data[i] == '！' or base_data[i] == '……':
-            #print(s)
-            if cntl == 0:
-                base_sentence.append(s)
-                print(s)
-                array.append(cnt)
-                sum += cnt
-                s = ""
-                cnt = 0
-                continue
-        elif base_data[i] == '“':
-            base_sentence.append(s)
-            print(s)
-            array.append(cnt)
-            sum += cnt
-            s = ""
-            cnt = 0
-            continue
-        else:
+        if  '\u4e00' <= base_data[i] <= '\u9fff':
             s += base_data[i]
-            cnt += 1
-    if cnt:
+        elif base_data[i] == '，':
+            #print(s)
+            base_sentence.append(s)
+            s = ""
+    if s != "":
+        #print(s)
         base_sentence.append(s)
-        array.append(cnt)
-        sum += cnt
-    cnt = 0
+        s = ""
+    #print(base_sentence)
     base_items = [[i for i in jieba.lcut(item)] for item in base_sentence]
-    base_items.append([""])
-    for i in range(0,len(array)):
-        array[i] = float(array[i]/sum)
-    #print(array)
-    #print(base_items)
+    #print(len(array))
     # 2.生成词典
     dictionary = corpora.Dictionary(base_items)
     # 3.通过doc2bow稀疏向量生成语料库
@@ -79,45 +44,43 @@ if __name__ == '__main__':
     fW.close()
     test_sentence = []
     s = ""
-    cntl = 0
+    cnt = 0
+    sum = 0
     for i in range(0, len(test_text)):
-        if test_text[i] == ' ':
-            continue
-        elif test_text[i] == '“':
-            cntl +=1
-        elif test_text[i] == '\n':
-            if i == 0 or test_text[i - 1] == '\n' or test_text[i - 1] == '“' or test_text[i - 1] == "：" or test_text[i-1] == '——' or test_text[i-1] == ' ' or test_text[i-1] == '。':
-                continue
-            else:
-                test_sentence.append(s)
-                #print(s)
-                s = ""
-                continue
-        elif test_text[i] == '。' or test_text[i] == '？' or test_text[i] == '！' or test_text[i] == '……' :
-            if cntl == 0:
-                test_sentence.append(s)
-                #print(s)
-                s = ""
-                continue
-        elif test_text[i] == '“':
-            cntl -= 1
-            test_sentence.append(s)
-            #print(s)
-            s = ""
-            continue
-        else:
+        if '\u4e00' <= test_text[i] <= '\u9fff':
             s += test_text[i]
+            cnt += 1
+        elif test_text[i] == '，':
+            #print(s)
+            if s!="":
+                test_sentence.append(s)
+                array.append(cnt)
+                sum += cnt
+                cnt = 0
+            s = ""
     if s != "":
+        #print(s)
         test_sentence.append(s)
+        array.append(cnt)
+        sum += cnt
+        cnt = 0
+        s = ""
+    print(test_sentence)
+    for i in range(0,len(array)):
+        array[i] = array[i]*1.0/sum
     test_items = [[i for i in jieba.cut(item)] for item in test_sentence]
-    #print(test_words)
-
-    # 8.新的稀疏向量以及加权相似度
+    #print(len(test_items))
     ans = 0.0
+    # 8.新的稀疏向量以及加权相似度
+    array2 = []
     for i in range(0,len(test_items)):
         new_vec = dictionary.doc2bow(test_items[i])
         sim = index[tf[new_vec]]
-        ans += sim[i]*array[i]
+        array2.append(sim[i])
+        #ns += array[i]*sim[i]
+    for i in range(0,len(array2)):
+        ans += array2[i]*array[i]
+    #print(ans)
     fR = open(sys.argv[3],'w',encoding='UTF-8')
     sim = str('%.15f'% ans)
     k = ""
