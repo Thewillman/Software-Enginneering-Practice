@@ -1,6 +1,7 @@
 # Software-Enginneering-Practice
 Something I struggle for  
 这个仓库负责本次软工实践的作业提交，泪目了兄弟们  
+test.py是主程序  
 2020.9.9  
 目前的论文计算公式是分段后每段的相似度加权（这段字数占总文本字数的比值）计算为总文本的相似度orz    
 目前的思路是以逗号为分割点把文本分段然后把每个句子用jieba分词形成列表  
