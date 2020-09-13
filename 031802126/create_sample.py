@@ -13,7 +13,7 @@ def add(test_text):#增字，目前只支持每隔固定距离添加固定长度
     return s
 
 def delete(test_text):#删字，目前只支持每隔固定距离删除固定长度随机汉字
-    a, b = eval(input("请输入划分段的字数以及要添加随机汉字的长度，用逗号隔开:"))
+    a, b = eval(input("请输入划分段的字数以及要删除随机汉字的长度，用逗号隔开:"))
     s = ""
     cnt = 0
     for i in range(0, len(test_text)):
@@ -33,13 +33,20 @@ def swap(a,b):
     temp = a
     a = b
     b = temp
-    return
+    return a,b
 
 def chaos_sort(str1):
     str1_len = len(str1)
+    list1 = list(str1)
     for i in range(0,str1_len):
-        k = random.randint(0,str1_len)
-        swap(str1[i],str1[str1_len - i - 1])
+        k = random.randint(0, str1_len-i-1)
+        #print(list1[k],list1[str1_len-i-1])
+        list1[k],list1[str1_len-i-1] = swap(list1[k],list1[str1_len-i-1])
+        #print(list1[k], list1[str1_len-i-1])
+    str1 = ""
+    for i in range(0, str1_len):
+        str1+=list1[i]
+    #print(str1)
     return str1
 
 def dis(test_text):#乱序，目前只支持逗号分割，句号分割以及每隔一段距离n次乱序的操作
@@ -55,7 +62,8 @@ def dis(test_text):#乱序，目前只支持逗号分割，句号分割以及每
             temp += test_text[i]
             if test_text[i] == str1:
                 for j in range(0,b):
-                    chaos_sort(temp)
+                    temp = chaos_sort(temp)
+                #print(temp)
                 s += temp
                 temp = ""
         if temp != "" :
@@ -72,6 +80,7 @@ def dis(test_text):#乱序，目前只支持逗号分割，句号分割以及每
             if cnt == c:
                 for j in range(0,b):
                     chaos_sort(temp)
+                print(temp)
                 s += temp
                 cnt = 0
                 temp = ""
@@ -87,11 +96,13 @@ def mix(test_text):#增删结合
     return str1
 def rep(test_text):#增删乱序结合
     str1 = add(test_text)
+    print(str1)
     str1 = delete(str1)
+    print(str1)
     str1 = dis(str1)
     return str1
 if __name__ == '__main__':
-    test = open("test.txt",'r',encoding = 'UTF-8')
+    test = open("My_database1\\orig.txt",'r',encoding = 'UTF-8')
     test_text = test.read()
     test.close()
     str1 = input("请输入创造相似文本的模式(add,del,dis,mix,rep):")
@@ -106,7 +117,8 @@ if __name__ == '__main__':
         change_text = mix(test_text)
     else:
         change_text = rep(test_text)
-    change = open("change.txt",'w',encoding = 'UTF-8')
+    #print(change_text)
+    change = open("My_database1\\orig_rep.txt",'w',encoding = 'UTF-8')
     change.write(change_text)
     change.close()
     print("已按%s模式生成相应文本:D",str1)
