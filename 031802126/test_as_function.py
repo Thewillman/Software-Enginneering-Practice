@@ -94,8 +94,11 @@ def solve_tfidf(orig_position,text_position,ans_position):
     orig_items = orig_solve(orig_position)
     text_items,array = text_solve(text_position)
     ans = test.cal_similarity_tfidf(orig_items,text_items,array)
-    write_dir(ans,ans_position)
-    print('orzTF-IDF模型查重结果为%.2f' %ans)
+    if abs(ans - 1.00) <= 0.000001 :
+        raise test.TextSameError
+    else:
+        write_dir(ans,ans_position)
+        print('orzTF-IDF模型查重结果为%.2f' %ans)
 
 def solve_lda(orig_position,text_position,ans_position):
     orig_items = orig_solve(orig_position)

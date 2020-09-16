@@ -50,13 +50,6 @@ class TestForAllTextTfIdf(unittest.TestCase):
         print("正在载入orig_0.8_rep.txt")
         test_as_function.solve_tfidf('sim_0.8\orig.txt', 'sim_0.8\orig_0.8_rep.txt', 'ans.txt')
 
-    def test_rep_tfidf_NoChineseError(self):
-        print("正在载入orig_NoChinese.txt")
-        test_as_function.solve_tfidf('sim_0.8\orig.txt', 'sim_0.8\orig_0.8_rep.txt', 'ans.txt')
-
-    def test_rep_tfidf_TextSameError(self):
-        print("正在载入")
-
     def test_My_database1_add(self):
         print("正在载入My_database1\\orig_add.txt")
         test_as_function.solve_tfidf('My_database1\orig.txt', 'My_database1\orig_add.txt', 'ans.txt')
@@ -93,6 +86,14 @@ class TestForAllTextTfIdf(unittest.TestCase):
         print("正在载入My_database1\\orig_rep.txt")
         test_as_function.solve_tfidf('My_database1\orig.txt', 'My_database1\orig_rep.txt', 'ans.txt')
 
+    # 异常处理，IndexError和TextDifferentError是在调试过程中使用的，目前程序已经没有这个问题
+    def test_NoChineseError_tfidf(self):
+        print("开始无汉字异常测试QAQ:")
+        test_as_function.solve_tfidf('sim_0.8\orig.txt', 'sim_0.8\orig_NoChinese.txt', 'ans.txt')
+
+    def test_TextSameError_tfidf(self):
+        print("开始文本相同异常测试QAQ:")
+        test_as_function.solve_tfidf('sim_0.8\orig.txt', 'sim_0.8\orig_copy.txt', 'ans.txt')
 
 if __name__ == '__main__':
     #unittest.main()
@@ -116,6 +117,9 @@ if __name__ == '__main__':
     suite.addTest(TestForAllTextTfIdf('test_My_database1_dis_15'))
     suite.addTest(TestForAllTextTfIdf('test_My_database1_mix'))
     suite.addTest(TestForAllTextTfIdf('test_My_database1_rep'))
+    suite.addTest(TestForAllTextTfIdf('test_NoChineseError_tfidf'))
+    suite.addTest(TestForAllTextTfIdf('test_TextSameError_tfidf'))
+    runner = unittest.TextTestRunner()
     runner = BeautifulReport(suite)
     runner.report(
         description='论文查重测试报告',  # => 报告描述
